@@ -1,0 +1,24 @@
+# 教師データ（画像 + JSON）
+sample/
+
+# macOS / エディタ
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python / Jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# 学習キャッシュ・出力
+.cache/
+cache/
+models/
+*.keras
+*.tflite
+*_savedmodel/
