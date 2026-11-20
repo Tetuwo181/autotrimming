@@ -6,8 +6,16 @@
 
 | パス | 内容 |
 |---|---|
-| `autotrim_training.ipynb` | Google Colab 向け学習ノートブック |
+| `autotrim_training_v2.ipynb` | Google Colab 向け学習ノートブック v2（推奨。下記「v2 の変更点」参照） |
+| `autotrim_training.ipynb` | v1（縦横比を5クラス分類するもの）。以下の「モデル」節は v1 の説明 |
 | `sample/` | 教師データ（画像 + 同名 JSON）。**Git 管理外**（`.gitignore`） |
+
+## v2 の変更点（`autotrim_training_v2.ipynb`）
+
+- **回転角を ±`ROT_LIMIT`（初期値 10°）に限定**：出力は `ROT_LIMIT·tanh(z/ROT_LIMIT)`。範囲外の教師データ（意図的な傾き・失敗作）は回転の学習から外す（`ROT_OUTLIER_POLICY`）。
+- **縦横比は分類ではなく比率ごとの適合度**：`ratio_scores` が 5比率それぞれに 0〜1 を出す（合計は 1 にならない）。近い比率も正解寄りに扱う「やわらかい正解」で学習（`RATIO_TAU`）。アプリでは上位 `TOP_K` 個を候補としてユーザーに選ばせる想定。
+- **トリミングは比率を数値で条件付け**：`condition` は `[log(目標の幅/高さ), log(キャンバスの幅/高さ), 前者−後者]` の3次元。5種類以外の比率も指定可能。BBox は「指定比率で収まる最大の枠」からの縮小・移動として学習し、別比率への置き換え（`ALT_RATIO_PROB`）でも学習する。
+- 成果物の保存先は `models_v2`（v1 と分離）。推論は `suggest_trims()`（候補一覧）と `trim_with_ratio()`（比率指定）。
 
 ## モデル
 
